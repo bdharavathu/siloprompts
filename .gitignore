@@ -27,11 +27,10 @@ ENV/
 Thumbs.db
 
 # Application data
-webapp/data/
 data/
 
 # Private/Sensitive prompts (uncomment if needed)
-# prompts/private/
+prompts/private/
 # *.secret.md
 
 # Logs
