@@ -1,7 +1,7 @@
-// PromptDB Web Application
+// SiloPrompts Web Application
 // Frontend JavaScript
 
-class PromptDB {
+class SiloPrompts {
     constructor() {
         this.prompts = [];
         this.categories = {};
@@ -314,5 +314,5 @@ class PromptDB {
 
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    new PromptDB();
+    new SiloPrompts();
 });

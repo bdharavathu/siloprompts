@@ -1,13 +1,13 @@
 .PHONY: help build up down logs restart clean test
 
 # Configuration
-CHART_NAME := promptdb
-NAMESPACE := promptdb
-RELEASE_NAME := promptdb
+CHART_NAME := siloprompts
+NAMESPACE := siloprompts
+RELEASE_NAME := siloprompts
 
 # Default target
 help:
-	@echo "PromptDB Web Interface - Make Commands"
+	@echo "SiloPrompts Web Interface - Make Commands"
 	@echo ""
 	@echo "Docker Compose Commands:"
 	@echo "  make build        - Build Docker image"
@@ -42,13 +42,13 @@ build:
 	docker-compose build
 
 up:
-	@echo "Starting PromptDB..."
-	@mkdir -p /Users/bdharavathu/codespace/pvdata/promptdbdata
+	@echo "Starting SiloPrompts..."
+	@mkdir -p /Users/bdharavathu/codespace/pvdata/silopromptsdata
 	docker-compose up -d
-	@echo "PromptDB is running at http://localhost:5000"
+	@echo "SiloPrompts is running at http://localhost:5000"
 
 down:
-	@echo "Stopping PromptDB..."
+	@echo "Stopping SiloPrompts..."
 	docker-compose down
 
 logs:
@@ -59,7 +59,7 @@ restart: down up
 clean:
 	@echo "Cleaning up..."
 	docker-compose down -v
-	docker rmi promptdb:latest 2>/dev/null || true
+	docker rmi siloprompts:latest 2>/dev/null || true
 
 test:
 	@echo "Testing deployment..."
@@ -119,10 +119,10 @@ dev:
 	FLASK_ENV=development python app.py
 
 shell:
-	docker-compose exec promptdb /bin/sh
+	docker-compose exec siloprompts /bin/sh
 
 # Build and push to registry (for production)
 push:
 	@read -p "Enter registry URL (e.g., docker.io/username): " registry; \
-	docker tag promptdb:latest $$registry/promptdb:latest; \
-	docker push $$registry/promptdb:latest
+	docker tag siloprompts:latest $$registry/siloprompts:latest; \
+	docker push $$registry/siloprompts:latest

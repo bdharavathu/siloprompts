@@ -1,0 +1,18 @@
+apiVersion: v2
+name: siloprompts
+description: A Helm chart for SiloPrompts - Personal AI Prompt Database
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - siloprompts
+  - ai
+  - prompts
+  - llm
+home: https://github.com/yourusername/siloprompts
+sources:
+  - https://github.com/yourusername/siloprompts
+maintainers:
+  - name: SiloPrompts Team
+    email: admin@siloprompts.local
+icon: https://raw.githubusercontent.com/yourusername/siloprompts/main/icon.png

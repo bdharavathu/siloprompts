@@ -1,10 +1,10 @@
-# PromptDB - Personal AI Prompt Database
+# SiloPrompts - Personal AI Prompt Database
 
 A lightweight, self-hosted web application for storing, searching, and managing your AI prompts across different platforms (ChatGPT, Claude, Perplexity, Gemini, etc.).
 
-![PromptDB Web UI](assets/promptDB_ui.png)
+![SiloPrompts Web UI](assets/siloprompts_ui.png)
 
-![Prompt Sections View](assets/promptdb_sections.png)
+![Prompt Sections View](assets/siloprompts_sections.png)
 
 ## Features
 
@@ -24,7 +24,7 @@ A lightweight, self-hosted web application for storing, searching, and managing 
 ```bash
 # Clone the repository
 git clone <your-repo-url>
-cd promptDB
+cd siloprompts
 
 # Start the application
 docker-compose up -d
@@ -69,7 +69,7 @@ python app.py
 ## Directory Structure
 
 ```
-promptDB/
+siloprompts/
 ├── app.py                    # Flask application
 ├── prompt-cli.py             # CLI tool
 ├── requirements.txt          # Python dependencies
@@ -91,7 +91,7 @@ promptDB/
 ├── prompt_templates/         # Prompt templates
 ├── data/                     # Application data (git-ignored)
 └── helm/                     # Kubernetes deployment
-    └── promptdb/
+    └── siloprompts/
 ```
 
 ## Environment Configuration
@@ -156,21 +156,21 @@ Access at: http://localhost:5002
 
 ```bash
 # Install with default values
-helm install promptdb ./helm/promptdb
+helm install siloprompts ./helm/siloprompts
 
 # Or customize with your values
-helm install promptdb ./helm/promptdb -f my-values.yaml
+helm install siloprompts ./helm/siloprompts -f my-values.yaml
 
 # Upgrade
-helm upgrade promptdb ./helm/promptdb
+helm upgrade siloprompts ./helm/siloprompts
 
 # Uninstall
-helm uninstall promptdb
+helm uninstall siloprompts
 ```
 
 #### Kubernetes Configuration
 
-Edit `helm/promptdb/values.yaml` to customize:
+Edit `helm/siloprompts/values.yaml` to customize:
 
 - Replica count
 - Resource limits
@@ -185,14 +185,14 @@ ingress:
   enabled: true
   className: "nginx"
   hosts:
-    - host: promptdb.yourdomain.com
+    - host: siloprompts.yourdomain.com
       paths:
         - path: /
           pathType: Prefix
   tls:
-    - secretName: promptdb-tls
+    - secretName: siloprompts-tls
       hosts:
-        - promptdb.yourdomain.com
+        - siloprompts.yourdomain.com
 ```
 
 ### Production Deployment
@@ -325,10 +325,10 @@ docker-compose up -d
 **Problem:** Pod not starting
 ```bash
 # Check pod status
-kubectl get pods -l app.kubernetes.io/name=promptdb
+kubectl get pods -l app.kubernetes.io/name=siloprompts
 
 # Check logs
-kubectl logs -l app.kubernetes.io/name=promptdb
+kubectl logs -l app.kubernetes.io/name=siloprompts
 
 # Describe pod for events
 kubectl describe pod <pod-name>

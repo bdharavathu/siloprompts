@@ -1,11 +1,11 @@
-# Default values for promptdb
+# Default values for siloprompts
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 replicaCount: 2
 
 image:
-  repository: promptdb
+  repository: siloprompts
   pullPolicy: IfNotPresent
   tag: "latest"
 
@@ -45,14 +45,14 @@ ingress:
     # cert-manager.io/cluster-issuer: letsencrypt-prod
     # nginx.ingress.kubernetes.io/rewrite-target: /
   hosts:
-    - host: promptdb.local
+    - host: siloprompts.local
       paths:
         - path: /
           pathType: Prefix
   tls: []
-  #  - secretName: promptdb-tls
+  #  - secretName: siloprompts-tls
   #    hosts:
-  #      - promptdb.local
+  #      - siloprompts.local
 
 resources:
   limits:

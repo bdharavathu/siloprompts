@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PromptDB CLI - Command-line tool for managing and searching prompts
+SiloPrompts CLI - Command-line tool for managing and searching prompts
 """
 
 import os
@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 
-class PromptDB:
+class SiloPrompts:
     def __init__(self, base_dir: str = None):
         self.base_dir = Path(base_dir) if base_dir else Path(__file__).parent
         self.prompts_dir = self.base_dir / "prompts"
@@ -94,7 +94,7 @@ class PromptDB:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='PromptDB CLI - Manage your AI prompts',
+        description='SiloPrompts CLI - Manage your AI prompts',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -136,7 +136,7 @@ Examples:
         parser.print_help()
         return
 
-    db = PromptDB()
+    db = SiloPrompts()
 
     try:
         if args.command == 'search':

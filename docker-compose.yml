@@ -1,10 +1,10 @@
 services:
-  promptdb:
+  siloprompts:
     build:
       context: .
       dockerfile: Dockerfile
-    image: promptdb:latest
-    container_name: promptdb-web
+    image: siloprompts:latest
+    container_name: siloprompts-web
     ports:
       - "5002:5000"
     volumes:
@@ -27,12 +27,12 @@ services:
       retries: 3
       start_period: 10s
     networks:
-      - promptdb-network
+      - siloprompts-network
     labels:
-      - "com.promptdb.description=PromptDB Web Interface"
-      - "com.promptdb.version=1.0.0"
+      - "com.siloprompts.description=SiloPrompts Web Interface"
+      - "com.siloprompts.version=1.0.0"
 
 networks:
-  promptdb-network:
+  siloprompts-network:
     driver: bridge
-    name: promptdb-network
+    name: siloprompts-network

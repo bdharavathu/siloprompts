@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "promptdb.fullname" . }}
+  name: {{ include "siloprompts.fullname" . }}
   labels:
-    {{- include "promptdb.labels" . | nindent 4 }}
+    {{- include "siloprompts.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "promptdb.selectorLabels" . | nindent 6 }}
+      {{- include "siloprompts.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "promptdb.selectorLabels" . | nindent 8 }}
+        {{- include "siloprompts.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "promptdb.serviceAccountName" . }}
+      serviceAccountName: {{ include "siloprompts.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -49,7 +49,7 @@ spec:
         - name: SECRET_KEY
           valueFrom:
             secretKeyRef:
-              name: {{ include "promptdb.fullname" . }}-secret
+              name: {{ include "siloprompts.fullname" . }}-secret
               key: secretKey
         volumeMounts:
         - name: prompts
@@ -71,7 +71,7 @@ spec:
           type: DirectoryOrCreate
         {{- else }}
         persistentVolumeClaim:
-          claimName: {{ include "promptdb.fullname" . }}-prompts-pvc
+          claimName: {{ include "siloprompts.fullname" . }}-prompts-pvc
         {{- end }}
       - name: data
         {{- if .Values.persistence.data.hostPath.enabled }}
@@ -80,7 +80,7 @@ spec:
           type: DirectoryOrCreate
         {{- else }}
         persistentVolumeClaim:
-          claimName: {{ include "promptdb.fullname" . }}-data-pvc
+          claimName: {{ include "siloprompts.fullname" . }}-data-pvc
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

@@ -2,9 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "promptdb.fullname" . }}
+  name: {{ include "siloprompts.fullname" . }}
   labels:
-    {{- include "promptdb.labels" . | nindent 4 }}
+    {{- include "siloprompts.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -33,7 +33,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ include "promptdb.fullname" $ }}
+                name: {{ include "siloprompts.fullname" $ }}
                 port:
                   number: {{ $.Values.service.port }}
           {{- end }}

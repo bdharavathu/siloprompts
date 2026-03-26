@@ -1,6 +1,6 @@
-# PromptDB Helm Chart
+# SiloPrompts Helm Chart
 
-This Helm chart deploys PromptDB on Kubernetes with version management and easy configuration.
+This Helm chart deploys SiloPrompts on Kubernetes with version management and easy configuration.
 
 ## Prerequisites
 
@@ -14,10 +14,10 @@ This Helm chart deploys PromptDB on Kubernetes with version management and easy 
 
 ```bash
 # From the webapp directory
-helm install promptdb ./helm/promptdb
+helm install siloprompts ./helm/siloprompts
 
 # Or specify namespace
-helm install promptdb ./helm/promptdb -n promptdb --create-namespace
+helm install siloprompts ./helm/siloprompts -n siloprompts --create-namespace
 ```
 
 ### Production Install with Custom Values
@@ -28,7 +28,7 @@ cat > my-values.yaml <<EOF
 replicaCount: 3
 
 image:
-  repository: your-registry/promptdb
+  repository: your-registry/siloprompts
   tag: "1.0.0"
 
 secret:
@@ -45,30 +45,30 @@ ingress:
   enabled: true
   className: "nginx"
   hosts:
-    - host: promptdb.yourdomain.com
+    - host: siloprompts.yourdomain.com
       paths:
         - path: /
           pathType: Prefix
   tls:
-    - secretName: promptdb-tls
+    - secretName: siloprompts-tls
       hosts:
-        - promptdb.yourdomain.com
+        - siloprompts.yourdomain.com
 EOF
 
 # Install with custom values
-helm install promptdb ./helm/promptdb -f my-values.yaml -n promptdb --create-namespace
+helm install siloprompts ./helm/siloprompts -f my-values.yaml -n siloprompts --create-namespace
 ```
 
 ## Configuration
 
-The following table lists the configurable parameters of the PromptDB chart and their default values.
+The following table lists the configurable parameters of the SiloPrompts chart and their default values.
 
 ### Application Settings
 
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `replicaCount` | Number of replicas | `2` |
-| `image.repository` | Image repository | `promptdb` |
+| `image.repository` | Image repository | `siloprompts` |
 | `image.tag` | Image tag | `latest` |
 | `image.pullPolicy` | Image pull policy | `IfNotPresent` |
 | `config.flaskEnv` | Flask environment | `production` |
@@ -89,7 +89,7 @@ The following table lists the configurable parameters of the PromptDB chart and 
 |-----------|-------------|---------|
 | `ingress.enabled` | Enable ingress | `false` |
 | `ingress.className` | Ingress class name | `nginx` |
-| `ingress.hosts` | Ingress hosts | `[{host: promptdb.local, paths: [{path: /, pathType: Prefix}]}]` |
+| `ingress.hosts` | Ingress hosts | `[{host: siloprompts.local, paths: [{path: /, pathType: Prefix}]}]` |
 | `ingress.tls` | TLS configuration | `[]` |
 
 ### Persistence Settings
@@ -103,7 +103,7 @@ The following table lists the configurable parameters of the PromptDB chart and 
 | `persistence.data.enabled` | Enable data PVC | `true` |
 | `persistence.data.size` | Data PVC size | `1Gi` |
 | `persistence.data.hostPath.enabled` | Use hostPath for data | `true` |
-| `persistence.data.hostPath.path` | HostPath location | `/Users/bdharavathu/codespace/pvdata/promptdbdata` |
+| `persistence.data.hostPath.path` | HostPath location | `/Users/bdharavathu/codespace/pvdata/silopromptsdata` |
 
 ### Resource Settings
 
@@ -127,19 +127,19 @@ The following table lists the configurable parameters of the PromptDB chart and 
 
 ```bash
 # Upgrade with default values
-helm upgrade promptdb ./helm/promptdb -n promptdb
+helm upgrade siloprompts ./helm/siloprompts -n siloprompts
 
 # Upgrade with custom values
-helm upgrade promptdb ./helm/promptdb -f my-values.yaml -n promptdb
+helm upgrade siloprompts ./helm/siloprompts -f my-values.yaml -n siloprompts
 
 # Upgrade with specific version
-helm upgrade promptdb ./helm/promptdb --set image.tag=1.0.1 -n promptdb
+helm upgrade siloprompts ./helm/siloprompts --set image.tag=1.0.1 -n siloprompts
 ```
 
 ## Uninstalling the Chart
 
 ```bash
-helm uninstall promptdb -n promptdb
+helm uninstall siloprompts -n siloprompts
 ```
 
 ## Examples
@@ -167,7 +167,7 @@ resources:
 ```
 
 ```bash
-helm install promptdb ./helm/promptdb -f dev-values.yaml
+helm install siloprompts ./helm/siloprompts -f dev-values.yaml
 ```
 
 ### Example 2: Production with LoadBalancer
@@ -177,7 +177,7 @@ helm install promptdb ./helm/promptdb -f dev-values.yaml
 replicaCount: 3
 
 image:
-  repository: myregistry.io/promptdb
+  repository: myregistry.io/siloprompts
   tag: "1.0.0"
 
 secret:
@@ -211,7 +211,7 @@ resources:
 ```
 
 ```bash
-helm install promptdb ./helm/promptdb -f prod-values.yaml -n production --create-namespace
+helm install siloprompts ./helm/siloprompts -f prod-values.yaml -n production --create-namespace
 ```
 
 ### Example 3: With Ingress and TLS
@@ -225,55 +225,55 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
   hosts:
-    - host: promptdb.example.com
+    - host: siloprompts.example.com
       paths:
         - path: /
           pathType: Prefix
   tls:
-    - secretName: promptdb-tls
+    - secretName: siloprompts-tls
       hosts:
-        - promptdb.example.com
+        - siloprompts.example.com
 ```
 
 ```bash
-helm install promptdb ./helm/promptdb -f ingress-values.yaml -n promptdb --create-namespace
+helm install siloprompts ./helm/siloprompts -f ingress-values.yaml -n siloprompts --create-namespace
 ```
 
 ## Helm Commands Cheat Sheet
 
 ```bash
 # List all releases
-helm list -n promptdb
+helm list -n siloprompts
 
 # Get release status
-helm status promptdb -n promptdb
+helm status siloprompts -n siloprompts
 
 # Get release values
-helm get values promptdb -n promptdb
+helm get values siloprompts -n siloprompts
 
 # Get all release information
-helm get all promptdb -n promptdb
+helm get all siloprompts -n siloprompts
 
 # Rollback to previous version
-helm rollback promptdb -n promptdb
+helm rollback siloprompts -n siloprompts
 
 # Rollback to specific revision
-helm rollback promptdb 1 -n promptdb
+helm rollback siloprompts 1 -n siloprompts
 
 # Show history
-helm history promptdb -n promptdb
+helm history siloprompts -n siloprompts
 
 # Dry run (test without installing)
-helm install promptdb ./helm/promptdb --dry-run --debug -n promptdb
+helm install siloprompts ./helm/siloprompts --dry-run --debug -n siloprompts
 
 # Template (render templates locally)
-helm template promptdb ./helm/promptdb
+helm template siloprompts ./helm/siloprompts
 
 # Package the chart
-helm package ./helm/promptdb
+helm package ./helm/siloprompts
 
 # Lint the chart
-helm lint ./helm/promptdb
+helm lint ./helm/siloprompts
 ```
 
 ## Version Management
@@ -282,42 +282,42 @@ Helm provides built-in version management:
 
 ```bash
 # Install version 1.0.0
-helm install promptdb ./helm/promptdb --set image.tag=1.0.0 -n promptdb
+helm install siloprompts ./helm/siloprompts --set image.tag=1.0.0 -n siloprompts
 
 # Upgrade to 1.0.1
-helm upgrade promptdb ./helm/promptdb --set image.tag=1.0.1 -n promptdb
+helm upgrade siloprompts ./helm/siloprompts --set image.tag=1.0.1 -n siloprompts
 
 # Check history
-helm history promptdb -n promptdb
+helm history siloprompts -n siloprompts
 
 # Rollback if needed
-helm rollback promptdb 1 -n promptdb
+helm rollback siloprompts 1 -n siloprompts
 ```
 
 ## Troubleshooting
 
 ### Check Pod Status
 ```bash
-kubectl get pods -n promptdb
-kubectl describe pod <pod-name> -n promptdb
-kubectl logs <pod-name> -n promptdb
+kubectl get pods -n siloprompts
+kubectl describe pod <pod-name> -n siloprompts
+kubectl logs <pod-name> -n siloprompts
 ```
 
 ### Check Service
 ```bash
-kubectl get svc -n promptdb
-kubectl describe svc promptdb -n promptdb
+kubectl get svc -n siloprompts
+kubectl describe svc siloprompts -n siloprompts
 ```
 
 ### Check PVC
 ```bash
-kubectl get pvc -n promptdb
-kubectl describe pvc promptdb-data-pvc -n promptdb
+kubectl get pvc -n siloprompts
+kubectl describe pvc siloprompts-data-pvc -n siloprompts
 ```
 
 ### Test Health Endpoint
 ```bash
-kubectl port-forward svc/promptdb 8080:80 -n promptdb
+kubectl port-forward svc/siloprompts 8080:80 -n siloprompts
 curl http://localhost:8080/health
 ```
 

@@ -51,11 +51,16 @@ body {
     font-weight: 700;
     color: var(--primary);
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .logo-icon {
-    font-size: 2rem;
+    width: 75px;
+    height: 90px;
     margin-right: 10px;
+    flex-shrink: 0;
 }
 
 .tagline {

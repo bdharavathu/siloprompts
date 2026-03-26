@@ -18,25 +18,25 @@ ENV PYTHONUNBUFFERED=1 \
     FLASK_ENV=production
 
 # Create non-root user for security
-RUN useradd -m -u 1000 promptdb && \
+RUN useradd -m -u 1000 siloprompts && \
     mkdir -p /app /app/data /app/prompts && \
-    chown -R promptdb:promptdb /app
+    chown -R siloprompts:siloprompts /app
 
 WORKDIR /app
 
 # Copy Python dependencies from builder
-COPY --from=builder /root/.local /home/promptdb/.local
+COPY --from=builder /root/.local /home/siloprompts/.local
 
 # Copy application files
-COPY --chown=promptdb:promptdb app.py .
-COPY --chown=promptdb:promptdb html_templates ./html_templates
-COPY --chown=promptdb:promptdb static ./static
+COPY --chown=siloprompts:siloprompts app.py .
+COPY --chown=siloprompts:siloprompts html_templates ./html_templates
+COPY --chown=siloprompts:siloprompts static ./static
 
 # Switch to non-root user
-USER promptdb
+USER siloprompts
 
 # Add local bin to PATH
-ENV PATH=/home/promptdb/.local/bin:$PATH
+ENV PATH=/home/siloprompts/.local/bin:$PATH
 
 # Expose port
 EXPOSE 5000

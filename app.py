@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-PromptDB Web Application
+SiloPrompts Web Application
 A web interface for browsing and managing AI prompts
 """
 
@@ -249,7 +249,7 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV', 'production') == 'development'
 
-    print(f"Starting PromptDB Web Interface on port {port}")
+    print(f"Starting SiloPrompts Web Interface on port {port}")
     print(f"Prompts directory: {PROMPTS_DIR}")
     print(f"Data directory: {DATA_DIR}")
 

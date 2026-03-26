@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="siloGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#14b8a6"/>
+    </linearGradient>
+    <linearGradient id="roofGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa"/>
+      <stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Silo body -->
+  <rect x="30" y="40" width="60" height="55" rx="6" ry="6" fill="url(#siloGrad)" opacity="0.9"/>
+
+  <!-- Silo dome/roof -->
+  <ellipse cx="60" cy="40" rx="30" ry="12" fill="url(#roofGrad)"/>
+
+  <!-- Horizontal bands on silo -->
+  <line x1="30" y1="55" x2="90" y2="55" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+  <line x1="30" y1="70" x2="90" y2="70" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+  <line x1="30" y1="85" x2="90" y2="85" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+
+  <!-- Terminal prompt symbol > at the base -->
+  <text x="40" y="108" font-family="'Courier New', monospace" font-size="22" font-weight="bold" fill="#3b82f6">&#62;_</text>
+
+  <!-- Small lock icon on silo body -->
+  <rect x="53" y="58" width="14" height="10" rx="2" fill="rgba(255,255,255,0.25)"/>
+  <path d="M56 58 v-4 a4 4 0 0 1 8 0 v4" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+
+  <!-- Subtle glow -->
+  <ellipse cx="60" cy="98" rx="25" ry="4" fill="url(#siloGrad)" opacity="0.15"/>
+</svg>

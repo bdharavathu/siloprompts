@@ -1,4 +1,4 @@
-# PromptDB Quick Start Guide
+# SiloPrompts Quick Start Guide
 
 ## 🚀 Get Started in 3 Steps
 
