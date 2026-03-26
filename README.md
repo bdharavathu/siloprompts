@@ -2,6 +2,10 @@
 
 A lightweight, self-hosted web application for storing, searching, and managing your AI prompts across different platforms (ChatGPT, Claude, Perplexity, Gemini, etc.).
 
+![PromptDB Web UI](assets/promptDB_ui.png)
+
+![Prompt Sections View](assets/promptdb_sections.png)
+
 ## Features
 
 - 🔍 **Full-text search** with real-time results
