@@ -82,7 +82,7 @@ python3 prompt-cli.py show productivity/planning.md
 ### Option 1: Create New File
 ```bash
 # Copy the template
-cp templates/prompt-template.md prompts/coding/my-custom-prompts.md
+cp prompt_templates/prompt-template.md prompts/coding/my-custom-prompts.md
 
 # Edit with your favorite editor
 code prompts/coding/my-custom-prompts.md
@@ -113,7 +113,7 @@ git add .
 git commit -m "Initial prompt database"
 
 # Add remote backup (optional)
-git remote add origin https://github.com/bdharavathu/siloprompts.git
+git remote add origin https://github.com/your-username/your-prompts.git
 git push -u origin main
 ```
 
@@ -136,7 +136,7 @@ git-crypt init
 - [ ] Use a prompt with ChatGPT/Claude
 - [ ] Add your first custom prompt
 - [ ] Set up git for versioning
-- [ ] Explore advanced options in `docs/ADVANCED-SETUP.md`
+- [ ] Explore the web interface with Docker
 
 ---
 
@@ -164,10 +164,10 @@ A: Yes! All prompts are in `prompts/` - edit with any text editor
 
 ## 🚀 Want More?
 
-Check out `docs/ADVANCED-SETUP.md` for:
+Check out the [README](../README.md) for:
 - Web interface with Docker
-- Browser extension
-- API server
-- Team collaboration setup
+- Kubernetes deployment with Helm
+- API endpoints
+- Production deployment guide
 
 **Start simple, expand when needed!**

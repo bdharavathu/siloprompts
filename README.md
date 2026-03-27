@@ -98,7 +98,8 @@ siloprompts/
 ├── .env.example              # Environment template
 ├── .gitignore                # Git ignore rules
 ├── README.md                 # This file
-├── QUICK-START.md            # Quick start guide
+├── docs/                     # Documentation
+│   └── QUICK-START.md        # Quick start guide
 ├── Makefile                  # Build automation
 ├── html_templates/           # HTML templates
 ├── static/                   # CSS, JS, assets
