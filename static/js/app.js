@@ -10,9 +10,29 @@ class SiloPrompts {
     }
 
     async init() {
+        this.initTheme();
         this.bindEvents();
         await this.loadCategories();
         await this.loadPrompts();
+    }
+
+    initTheme() {
+        const saved = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', saved);
+        this.updateThemeIcon(saved);
+    }
+
+    toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        this.updateThemeIcon(next);
+    }
+
+    updateThemeIcon(theme) {
+        const btn = document.getElementById('themeToggle');
+        btn.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 
     bindEvents() {
@@ -33,6 +53,9 @@ class SiloPrompts {
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') this.closeModal();
         });
+
+        // Theme toggle
+        document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
     }
 
     async loadCategories() {
@@ -66,7 +89,13 @@ class SiloPrompts {
         const categoryFilter = document.getElementById('categoryFilter');
 
         categoriesList.innerHTML = '';
-        categoryFilter.innerHTML = '<button class="pill active" data-category="all">All</button>';
+        categoryFilter.innerHTML = '';
+        const allPill = document.createElement('button');
+        allPill.className = 'pill active';
+        allPill.dataset.category = 'all';
+        allPill.textContent = 'All';
+        allPill.addEventListener('click', () => this.filterByCategory('all'));
+        categoryFilter.appendChild(allPill);
 
         const sortedCategories = Object.entries(this.categories).sort((a, b) =>
             a[0].localeCompare(b[0])

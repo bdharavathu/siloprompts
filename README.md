@@ -398,7 +398,7 @@ Future enhancements:
 - [ ] Usage history and analytics
 - [ ] Export prompts (JSON, PDF)
 - [ ] Import from other sources
-- [ ] Dark/Light mode toggle
+- [x] Dark/Light mode toggle
 - [ ] Browser extension
 - [ ] Mobile-responsive improvements
 
