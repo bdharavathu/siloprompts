@@ -8,8 +8,8 @@ services:
     ports:
       - "5002:5000"
     volumes:
-      # Mount prompts directory as read-only
-      - ./prompts:/app/prompts:ro
+      # Mount prompts directory (read-write for editing via web UI)
+      - ./prompts:/app/prompts
       # Mount data directory for application data (logs, cache, etc.)
       # Update this path to match your local system or use Docker volumes
       - ./data:/app/data
@@ -30,7 +30,7 @@ services:
       - siloprompts-network
     labels:
       - "com.siloprompts.description=SiloPrompts Web Interface"
-      - "com.siloprompts.version=1.0.0"
+      - "com.siloprompts.version=1.0.2"
 
 networks:
   siloprompts-network:

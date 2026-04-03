@@ -1,173 +1,129 @@
 # SiloPrompts Quick Start Guide
 
-## 🚀 Get Started in 3 Steps
+## Get Running in 2 Minutes
 
-### 1️⃣ Browse Your Prompts
-
+### Option 1: Docker (Recommended)
 ```bash
-# List all available prompts
-python3 prompt-cli.py list
+docker run -d -p 5002:5000 -v ./prompts:/app/prompts bdharavathu/siloprompts
+```
+Open [http://localhost:5002](http://localhost:5002)
 
-# Or browse manually
-cd prompts/coding
-cat code-review.md
+### Option 2: Local
+```bash
+pip install -r requirements.txt
+export PROMPTS_DIR=./prompts DATA_DIR=./data
+python app.py
+```
+Open [http://localhost:5000](http://localhost:5000)
+
+---
+
+## Using the Web UI
+
+### Browse & Search
+- **Sidebar** shows all categories with prompt counts
+- **Category pills** at the top filter the grid
+- **Tags** below categories let you filter across categories (e.g., show all "python" prompts)
+- **Search** (press `⌘K`) finds prompts by keyword
+- **Sort** using the ☰ button — by name, date, or size
+
+### Copy a Prompt
+1. Click a prompt card to open it
+2. Each section has a **📋 Copy** button
+3. Paste into ChatGPT, Claude, Gemini, or any AI platform
+
+### Favorite Prompts
+- Click **☆** next to any section to favorite it
+- Click **★ Favorites** in the sidebar to see all your favorites
+- Favorites are stored in your browser (no server needed)
+
+### Create a Prompt
+1. Click **+ New Prompt**
+2. Fill in title, category, tags
+3. Add sections — each section is one prompt
+4. Click **Save**
+
+### Import a Prompt
+1. Click **↓ Import**
+2. Select a `.md` file from your computer
+3. Choose a category
+4. Click **Upload**
+
+### Export a Prompt
+1. Open a prompt card
+2. Click **↑ Download** to save as `.md`
+
+### Edit & Delete
+- Open a prompt → click **Edit** to modify sections, tags, title
+- Click **Delete** to remove (with option to clean up empty categories)
+
+---
+
+## Prompt File Format
+
+Prompts are stored as `.md` files in `prompts/<category>/`:
+
+```markdown
+# Code Review Prompts
+Tags: python, security, best-practices
+
+## General Code Review
+
+​```
+Review the following code for:
+- Bug risks and logic errors
+- Security vulnerabilities
+- Performance improvements
+
+[PASTE YOUR CODE HERE]
+​```
+
+## Security-Focused Review
+
+​```
+Perform a security audit of this code...
+​```
 ```
 
-### 2️⃣ Search for What You Need
+**Structure:**
+- `# Title` — File title (shown on cards)
+- `Tags: ...` — Comma-separated, used for filtering
+- `## Section` — Each section is a separate prompt
+- Code blocks contain the prompt text users copy
+
+---
+
+## CLI Tool
+
+For terminal users:
 
 ```bash
-# Search by keyword
-python3 prompt-cli.py search "debug"
-python3 prompt-cli.py search "blog post"
-python3 prompt-cli.py search "security"
-```
-
-### 3️⃣ Copy & Use
-
-```bash
-# Method 1: View sections in a file
-python3 prompt-cli.py sections coding/debugging.md
-
-# Method 2: Copy to clipboard (requires: pip install pyperclip)
-python3 prompt-cli.py copy coding/debugging.md 0
-
-# Method 3: Manual copy
-# Open the file, copy the prompt, replace [PLACEHOLDERS], paste to AI
+python prompt-cli.py list                        # List all categories
+python prompt-cli.py search "debug"              # Search prompts
+python prompt-cli.py show coding/code-review.md  # View a prompt file
+python prompt-cli.py sections coding/debugging.md # List sections
+python prompt-cli.py copy coding/debugging.md 0  # Copy to clipboard
 ```
 
 ---
 
-## 📁 What's Inside
+## What's Included
 
-| Category | Description | Example Prompts |
-|----------|-------------|-----------------|
-| **coding/** | Programming tasks | Code review, debugging, generation |
-| **writing/** | Content creation | Blog posts, documentation, emails |
-| **analysis/** | Data & research | Data analysis, comparisons, trends |
-| **creative/** | Ideation | Brainstorming, problem-solving |
-| **productivity/** | Organization | Planning, prioritization, learning |
-
----
-
-## 💡 Common Use Cases
-
-### Debug a Problem
-```bash
-python3 prompt-cli.py show coding/debugging.md
-# Copy "General Bug Diagnosis" prompt
-# Replace [PLACEHOLDERS] with your code and error
-# Paste to ChatGPT/Claude/Gemini/Perplexity
-```
-
-### Write a Blog Post
-```bash
-python3 prompt-cli.py show writing/content-creation.md
-# Copy "Blog Post Writing" prompt
-# Fill in topic, audience, key points
-# Get AI to write your post
-```
-
-### Plan a Project
-```bash
-python3 prompt-cli.py show productivity/planning.md
-# Copy "Project Planning" prompt
-# Describe your project
-# Get structured plan with milestones
-```
+| Category | What's Inside |
+|----------|---------------|
+| **coding/** | Code review, debugging, generation |
+| **writing/** | Blog posts, documentation, emails |
+| **analysis/** | Data analysis, comparisons, trends |
+| **creative/** | Brainstorming, problem-solving |
+| **productivity/** | Planning, prioritization, learning |
+| **instructions/** | Task instructions, workflows |
 
 ---
 
-## ✏️ Add Your Own Prompts
+## Next Steps
 
-### Option 1: Create New File
-```bash
-# Copy the template
-cp prompt_templates/prompt-template.md prompts/coding/my-custom-prompts.md
-
-# Edit with your favorite editor
-code prompts/coding/my-custom-prompts.md
-```
-
-### Option 2: Add to Existing File
-```bash
-# Edit any existing file
-code prompts/coding/code-review.md
-
-# Add new section with ## header
-## My Custom Review
-
-```
-[Your prompt here]
-```
-```
-
----
-
-## 🔐 Security & Backup
-
-### Option 1: Git (Recommended)
-```bash
-# Initialize git
-git init
-git add .
-git commit -m "Initial prompt database"
-
-# Add remote backup (optional)
-git remote add origin https://github.com/your-username/your-prompts.git
-git push -u origin main
-```
-
-### Option 2: Cloud Sync
-Move the folder to Dropbox/iCloud/Google Drive for automatic backup.
-
-### Option 3: Encryption
-```bash
-# For sensitive prompts
-brew install git-crypt  # macOS
-git-crypt init
-```
-
----
-
-## 🎯 Next Steps
-
-- [ ] Try searching for a prompt: `python3 prompt-cli.py search "your topic"`
-- [ ] Browse a category: `ls prompts/coding`
-- [ ] Use a prompt with ChatGPT/Claude
-- [ ] Add your first custom prompt
-- [ ] Set up git for versioning
-- [ ] Explore the web interface with Docker
-
----
-
-## 🆘 Need Help?
-
-**CLI Commands:**
-```bash
-python3 prompt-cli.py --help           # Show all commands
-python3 prompt-cli.py search --help    # Help for search
-```
-
-**Common Issues:**
-
-Q: "python3: command not found"
-A: Install Python from python.org or use `python` instead
-
-Q: "How do I copy prompts?"
-A: Install pyperclip: `pip install pyperclip`
-   Or just view and manually copy
-
-Q: "Can I edit prompts?"
-A: Yes! All prompts are in `prompts/` - edit with any text editor
-
----
-
-## 🚀 Want More?
-
-Check out the [README](../README.md) for:
-- Web interface with Docker
-- Kubernetes deployment with Helm
-- API endpoints
-- Production deployment guide
-
-**Start simple, expand when needed!**
+- Browse the included prompts to see what's available
+- Create your first custom prompt from the web UI
+- Set up tags to organize prompts your way
+- Favorite the prompts you use most often
+- Check out [API.md](API.md) if you want to integrate programmatically
