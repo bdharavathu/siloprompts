@@ -9,7 +9,7 @@ markdown==3.10.2
 gunicorn==25.3.0
 
 # Environment variables
-python-dotenv==1.0.0
+python-dotenv==1.2.2
 
 # Git integration (optional, for future use)
 gitpython==3.1.46
