@@ -13,3 +13,6 @@ README.md
 Makefile
 prompt-cli.py
 prompt_templates/
+tests/
+.pytest_cache/
+__pycache__/

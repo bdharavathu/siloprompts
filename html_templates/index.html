@@ -24,6 +24,19 @@
         <!-- Search Bar -->
         <div class="search-section">
             <div class="search-container">
+                <div class="tools-menu-wrapper">
+                    <button id="toolsMenuBtn" class="tools-menu-btn" title="Utils">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
+                            <circle cx="3" cy="3" r="1.5"/><circle cx="9" cy="3" r="1.5"/><circle cx="15" cy="3" r="1.5"/>
+                            <circle cx="3" cy="9" r="1.5"/><circle cx="9" cy="9" r="1.5"/><circle cx="15" cy="9" r="1.5"/>
+                            <circle cx="3" cy="15" r="1.5"/><circle cx="9" cy="15" r="1.5"/><circle cx="15" cy="15" r="1.5"/>
+                        </svg>
+                    </button>
+                    <div id="toolsDropdown" class="tools-dropdown">
+                        <button id="backupBtn" class="tools-dropdown-item">Backup All</button>
+                        <button id="restoreBtn" class="tools-dropdown-item">Restore All</button>
+                    </div>
+                </div>
                 <input
                     type="text"
                     id="searchInput"

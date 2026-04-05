@@ -324,6 +324,24 @@ class SiloPrompts {
 
         // Import button
         document.getElementById('importBtn').addEventListener('click', () => this.showImportForm());
+
+        // Tools menu (Backup & Restore)
+        const toolsBtn = document.getElementById('toolsMenuBtn');
+        const toolsDropdown = document.getElementById('toolsDropdown');
+        toolsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toolsDropdown.classList.toggle('active');
+        });
+        document.addEventListener('click', () => toolsDropdown.classList.remove('active'));
+
+        document.getElementById('backupBtn').addEventListener('click', () => {
+            toolsDropdown.classList.remove('active');
+            this.backupAll();
+        });
+        document.getElementById('restoreBtn').addEventListener('click', () => {
+            toolsDropdown.classList.remove('active');
+            this.showRestoreForm();
+        });
     }
 
     async loadCategories() {
@@ -735,6 +753,98 @@ class SiloPrompts {
         }
     }
 
+    backupAll() {
+        window.location.href = '/api/backup';
+        this.showToast('Backup download started', 'success');
+    }
+
+    showRestoreForm() {
+        const modal = document.getElementById('promptModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        const modalActions = document.getElementById('modalActions');
+
+        modalTitle.textContent = 'Restore from Backup';
+        modalBody.innerHTML = `
+            <form class="edit-form">
+                <div class="form-group">
+                    <label class="form-label">Select ZIP backup file</label>
+                    <input type="file" id="restoreFile" accept=".zip" class="form-input import-file-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">If a prompt already exists:</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="restoreMode" value="skip" checked> Skip existing (keep current)
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="restoreMode" value="overwrite"> Overwrite with backup version
+                        </label>
+                    </div>
+                </div>
+                <div id="restorePreview" class="import-preview" style="display:none;"></div>
+            </form>
+        `;
+
+        modalActions.innerHTML = `
+            <button class="modal-action-btn cancel-btn" id="cancelRestoreBtn">Cancel</button>
+            <button class="modal-action-btn save-btn" id="restoreUploadBtn">Restore</button>
+        `;
+
+        document.getElementById('cancelRestoreBtn').addEventListener('click', () => this.closeModal());
+        document.getElementById('restoreUploadBtn').addEventListener('click', () => this.restoreBackup());
+        modal.classList.add('active');
+    }
+
+    async restoreBackup() {
+        const fileInput = document.getElementById('restoreFile');
+        const file = fileInput?.files[0];
+
+        if (!file) {
+            this.showToast('Please select a ZIP file', 'error');
+            return;
+        }
+
+        if (!file.name.endsWith('.zip')) {
+            this.showToast('Only .zip files are allowed', 'error');
+            return;
+        }
+
+        const mode = document.querySelector('input[name="restoreMode"]:checked')?.value || 'skip';
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('mode', mode);
+
+        try {
+            const response = await fetch('/api/restore', { method: 'POST', body: formData });
+            const data = await response.json();
+
+            if (!response.ok) {
+                this.showToast(data.error || 'Restore failed', 'error');
+                return;
+            }
+
+            // Show results summary in the modal
+            const preview = document.getElementById('restorePreview');
+            preview.style.display = 'block';
+            preview.innerHTML = `
+                <h4>Restore Complete</h4>
+                <p><strong>Created:</strong> ${data.created.length} prompt(s)</p>
+                <p><strong>Skipped:</strong> ${data.skipped.length} prompt(s)</p>
+                <p><strong>Overwritten:</strong> ${data.overwritten.length} prompt(s)</p>
+                ${data.errors.length ? `<p><strong>Errors:</strong> ${data.errors.length}</p>` : ''}
+            `;
+
+            this.showToast(data.message, 'success');
+            await this.loadCategories();
+            await this.loadPrompts();
+            await this.loadTags();
+        } catch (error) {
+            console.error('Error restoring backup:', error);
+            this.showToast('Error restoring backup', 'error');
+        }
+    }
+
     async showEditForm(path) {
         const modalTitle = document.getElementById('modalTitle');
         const modalBody = document.getElementById('modalBody');
@@ -819,10 +929,15 @@ class SiloPrompts {
         `;
 
         // Event listeners
-        document.getElementById('editCategory').addEventListener('change', (e) => {
-            document.getElementById('newCategoryGroup').style.display =
-                e.target.value === '__new__' ? 'block' : 'none';
+        const editCategoryEl = document.getElementById('editCategory');
+        const newCategoryGroupEl = document.getElementById('newCategoryGroup');
+        editCategoryEl.addEventListener('change', (e) => {
+            newCategoryGroupEl.style.display = e.target.value === '__new__' ? 'block' : 'none';
         });
+        // Show new category input immediately if it's the only/default option
+        if (editCategoryEl.value === '__new__') {
+            newCategoryGroupEl.style.display = 'block';
+        }
 
         if (isNew) {
             document.getElementById('editTitle').addEventListener('input', (e) => {

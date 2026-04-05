@@ -30,7 +30,7 @@ services:
       - siloprompts-network
     labels:
       - "com.siloprompts.description=SiloPrompts Web Interface"
-      - "com.siloprompts.version=1.0.2"
+      - "com.siloprompts.version=1.0.3"
 
 networks:
   siloprompts-network:

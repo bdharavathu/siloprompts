@@ -1,4 +1,4 @@
-.PHONY: help build up down logs restart clean test
+.PHONY: help build up down logs restart clean test test-live
 
 # Configuration
 CHART_NAME := siloprompts
@@ -16,7 +16,8 @@ help:
 	@echo "  make logs         - View logs"
 	@echo "  make restart      - Restart containers"
 	@echo "  make clean        - Remove containers and images"
-	@echo "  make test         - Test the deployment"
+	@echo "  make test         - Run pytest test suite"
+	@echo "  make test-live    - Test live deployment"
 	@echo ""
 	@echo "Helm Commands:"
 	@echo "  make helm-install    - Install chart with Helm"
@@ -62,8 +63,10 @@ clean:
 	docker rmi siloprompts:latest 2>/dev/null || true
 
 test:
-	@echo "Testing deployment..."
-	@sleep 5
+	pytest tests/ -v
+
+test-live:
+	@echo "Testing live deployment..."
 	@curl -f http://localhost:5000/health && echo "✅ Health check passed" || echo "❌ Health check failed"
 	@curl -f http://localhost:5000/api/categories && echo "✅ API working" || echo "❌ API failed"
 

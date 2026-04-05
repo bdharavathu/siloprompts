@@ -31,9 +31,14 @@ Cloud prompt managers exist, but they require uploading your prompts to someone 
 ### Docker (Quickest)
 
 ```bash
-docker run -d -p 5002:5000 -v ./prompts:/app/prompts bdharavathu/siloprompts
+docker run -d -p 5002:5000 bdharavathu/siloprompts
+```
 
-# Access at http://localhost:5002
+Access at http://localhost:5002
+
+Optional: Mount your own prompts folder for persistence
+```
+docker run -d -p 5002:5000 -v ./prompts:/app/prompts bdharavathu/siloprompts
 ```
 
 ### Docker Compose

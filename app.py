@@ -6,6 +6,8 @@ A web interface for browsing and managing AI prompts
 
 import os
 import re
+import io
+import zipfile
 from pathlib import Path
 from flask import Flask, render_template, jsonify, request, send_from_directory, send_file
 import markdown
@@ -14,7 +16,7 @@ from datetime import datetime
 app = Flask(__name__, template_folder='html_templates')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
 
-VERSION = '1.0.2'
+VERSION = '1.0.3'
 
 # Paths - can be overridden by environment variables
 PROMPTS_DIR = Path(os.environ.get('PROMPTS_DIR', '/app/prompts'))
@@ -251,13 +253,14 @@ class PromptManager:
         """Search prompts by keyword"""
         results = []
         flags = 0 if case_sensitive else re.IGNORECASE
+        safe_query = re.escape(query)
 
         for md_file in self.prompts_path.rglob('*.md'):
             try:
                 with open(md_file, 'r', encoding='utf-8') as f:
                     content = f.read()
 
-                if re.search(query, content, flags):
+                if re.search(safe_query, content, flags):
                     relative_path = md_file.relative_to(self.prompts_path)
                     category = relative_path.parts[0] if len(relative_path.parts) > 1 else 'root'
 
@@ -265,7 +268,7 @@ class PromptManager:
                     lines = content.split('\n')
                     matches = []
                     for line_num, line in enumerate(lines):
-                        if re.search(query, line, flags):
+                        if re.search(safe_query, line, flags):
                             matches.append({
                                 'line': line_num + 1,
                                 'text': line.strip()[:150]  # Truncate long lines
@@ -278,10 +281,90 @@ class PromptManager:
                         'category': category,
                         'filename': md_file.name,
                         'matches': matches,
-                        'match_count': len(re.findall(query, content, flags))
+                        'match_count': len(re.findall(safe_query, content, flags))
                     })
             except Exception as e:
                 print(f"Error searching {md_file}: {e}")
+
+        return results
+
+    def backup_zip(self):
+        """Create a ZIP archive of all prompts preserving category/filename structure"""
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as zf:
+            for md_file in sorted(self.prompts_path.rglob('*.md')):
+                # Skip hidden directories
+                if any(part.startswith('.') for part in md_file.relative_to(self.prompts_path).parts):
+                    continue
+                relative = md_file.relative_to(self.prompts_path)
+                zf.write(md_file, arcname=str(relative))
+        buffer.seek(0)
+        return buffer
+
+    def restore_from_zip(self, zip_buffer, mode='skip'):
+        """Restore prompts from a ZIP archive
+
+        Args:
+            zip_buffer: file-like object containing ZIP data
+            mode: 'skip' to skip existing files, 'overwrite' to replace them
+
+        Returns:
+            dict with created, skipped, overwritten, and errors lists
+        """
+        results = {'created': [], 'skipped': [], 'overwritten': [], 'errors': []}
+
+        with zipfile.ZipFile(zip_buffer, 'r') as zf:
+            entries = [e for e in zf.infolist() if not e.is_dir()]
+            if len(entries) > 500:
+                raise ValueError('ZIP contains too many files (max 500)')
+
+            for entry in entries:
+                name = entry.filename
+
+                # Skip non-.md files
+                if not name.endswith('.md'):
+                    continue
+
+                # Security: normalize and validate path
+                normalized = os.path.normpath(name)
+                if normalized.startswith('..') or normalized.startswith('/'):
+                    results['errors'].append(f'Invalid path: {name}')
+                    continue
+
+                parts = Path(normalized).parts
+                # Require exactly category/filename.md structure
+                if len(parts) != 2:
+                    results['errors'].append(f'Invalid structure (need category/file.md): {name}')
+                    continue
+
+                category, filename = parts
+                stem = os.path.splitext(filename)[0]
+
+                # Sanitize category and filename
+                safe_category = re.sub(r'[^a-zA-Z0-9_-]', '-', category).strip('-')
+                safe_stem = re.sub(r'[^a-zA-Z0-9_-]', '-', stem).strip('-')
+                if not safe_category or not safe_stem:
+                    results['errors'].append(f'Invalid name after sanitization: {name}')
+                    continue
+
+                # Check per-file size (1MB)
+                if entry.file_size > 1_000_000:
+                    results['errors'].append(f'File too large (max 1MB): {name}')
+                    continue
+
+                target = self.prompts_path / safe_category / f'{safe_stem}.md'
+
+                if target.exists():
+                    if mode == 'skip':
+                        results['skipped'].append(f'{safe_category}/{safe_stem}.md')
+                        continue
+                    else:
+                        results['overwritten'].append(f'{safe_category}/{safe_stem}.md')
+                else:
+                    results['created'].append(f'{safe_category}/{safe_stem}.md')
+
+                target.parent.mkdir(parents=False, exist_ok=True)
+                target.write_bytes(zf.read(entry))
 
         return results
 
@@ -371,10 +454,10 @@ def api_create_prompt():
             data['category'], data['filename'], data['title'], data['sections'], tags=tags
         )
         return jsonify({'path': path, 'message': 'Prompt created successfully'}), 201
-    except FileExistsError as e:
-        return jsonify({'error': str(e)}), 409
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+    except FileExistsError:
+        return jsonify({'error': 'Prompt already exists'}), 409
+    except ValueError:
+        return jsonify({'error': 'Invalid prompt data'}), 400
 
 
 @app.route('/api/prompts/<path:prompt_path>', methods=['PUT'])
@@ -396,10 +479,10 @@ def api_update_prompt(prompt_path):
     try:
         path = prompt_manager.update_prompt(prompt_path, data['title'], data['sections'], tags=tags)
         return jsonify({'path': path, 'message': 'Prompt updated successfully'})
-    except FileNotFoundError as e:
-        return jsonify({'error': str(e)}), 404
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+    except FileNotFoundError:
+        return jsonify({'error': 'Prompt not found'}), 404
+    except ValueError:
+        return jsonify({'error': 'Invalid prompt data'}), 400
 
 
 @app.route('/api/prompts/<path:prompt_path>', methods=['DELETE'])
@@ -410,10 +493,10 @@ def api_delete_prompt(prompt_path):
     try:
         result = prompt_manager.delete_prompt(prompt_path, delete_empty)
         return jsonify({'message': 'Prompt deleted successfully', **result})
-    except FileNotFoundError as e:
-        return jsonify({'error': str(e)}), 404
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+    except FileNotFoundError:
+        return jsonify({'error': 'Prompt not found'}), 404
+    except ValueError:
+        return jsonify({'error': 'Invalid path'}), 400
 
 
 @app.route('/api/prompts/<path:prompt_path>/download')
@@ -447,8 +530,8 @@ def api_import_prompt():
 
     try:
         prompt_manager._validate_filename(category)
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+    except ValueError:
+        return jsonify({'error': 'Invalid category name'}), 400
 
     # Read and validate size
     content = file.read()
@@ -474,6 +557,54 @@ def api_import_prompt():
     file_path.write_bytes(content)
 
     return jsonify({'path': relative_path, 'message': 'Prompt imported successfully'}), 201
+
+
+@app.route('/api/backup')
+def api_backup():
+    """Download all prompts as a ZIP backup"""
+    buffer = prompt_manager.backup_zip()
+    timestamp = datetime.now().strftime('%Y-%m-%dT%H%M%S')
+    return send_file(
+        buffer,
+        mimetype='application/zip',
+        as_attachment=True,
+        download_name=f'siloprompts-backup-{timestamp}.zip'
+    )
+
+
+@app.route('/api/restore', methods=['POST'])
+def api_restore():
+    """Restore prompts from a ZIP backup"""
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file provided'}), 400
+
+    file = request.files['file']
+    if not file.filename or not file.filename.endswith('.zip'):
+        return jsonify({'error': 'Only .zip files are allowed'}), 400
+
+    if request.content_length and request.content_length > 10_000_000:
+        return jsonify({'error': 'File too large (max 10MB)'}), 413
+
+    mode = request.form.get('mode', 'skip')
+    if mode not in ('skip', 'overwrite'):
+        return jsonify({'error': 'Invalid mode. Use "skip" or "overwrite".'}), 400
+
+    zip_bytes = file.read()
+    if len(zip_bytes) > 10_000_000:
+        return jsonify({'error': 'File too large (max 10MB)'}), 413
+
+    try:
+        results = prompt_manager.restore_from_zip(io.BytesIO(zip_bytes), mode)
+    except zipfile.BadZipFile:
+        return jsonify({'error': 'Invalid ZIP file'}), 400
+    except ValueError:
+        return jsonify({'error': 'Invalid restore data'}), 400
+
+    total = len(results['created']) + len(results['overwritten'])
+    return jsonify({
+        'message': f'Restored {total} prompt(s)',
+        **results
+    })
 
 
 @app.route('/health')
