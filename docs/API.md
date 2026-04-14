@@ -1,6 +1,6 @@
-# SiloPrompts API Reference
+# API Reference
 
-Base URL: `http://localhost:5002`
+Base URL: `http://localhost:5000` (pip) or `http://localhost:5002` (Docker)
 
 ## Endpoints
 

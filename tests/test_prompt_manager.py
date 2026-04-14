@@ -1,5 +1,5 @@
 import pytest
-from app import PromptManager
+from siloprompts.manager import PromptManager
 
 
 # --- Empty directory behavior ---

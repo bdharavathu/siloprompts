@@ -54,7 +54,6 @@ spec:
         volumeMounts:
         - name: prompts
           mountPath: {{ .Values.config.promptsDir }}
-          readOnly: true
         - name: data
           mountPath: {{ .Values.config.dataDir }}
         livenessProbe:

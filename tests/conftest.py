@@ -1,15 +1,11 @@
 import pytest
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-import app as app_module
+from siloprompts.manager import PromptManager
+from siloprompts.web import create_app
 
 
 @pytest.fixture
 def prompt_manager(tmp_path):
-    return app_module.PromptManager(tmp_path)
+    return PromptManager(tmp_path)
 
 
 @pytest.fixture
@@ -59,24 +55,22 @@ def populated_dir(tmp_path):
 
 @pytest.fixture
 def populated_manager(populated_dir):
-    return app_module.PromptManager(populated_dir)
+    return PromptManager(populated_dir)
 
 
 @pytest.fixture
 def client(tmp_path):
-    app_module.app.config['TESTING'] = True
-    original = app_module.prompt_manager
-    app_module.prompt_manager = app_module.PromptManager(tmp_path)
-    with app_module.app.test_client() as c:
+    # Place marker to skip default prompts copy in tests
+    (tmp_path / '.initialized').touch()
+    app = create_app(prompts_dir=str(tmp_path))
+    app.config['TESTING'] = True
+    with app.test_client() as c:
         yield c
-    app_module.prompt_manager = original
 
 
 @pytest.fixture
 def populated_client(populated_dir):
-    app_module.app.config['TESTING'] = True
-    original = app_module.prompt_manager
-    app_module.prompt_manager = app_module.PromptManager(populated_dir)
-    with app_module.app.test_client() as c:
+    app = create_app(prompts_dir=str(populated_dir))
+    app.config['TESTING'] = True
+    with app.test_client() as c:
         yield c
-    app_module.prompt_manager = original

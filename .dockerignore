@@ -9,10 +9,11 @@ helm/
 docs/
 assets/
 LICENSE
-README.md
 Makefile
-prompt-cli.py
 prompt_templates/
 tests/
 .pytest_cache/
 __pycache__/
+build/
+dist/
+*.egg-info/

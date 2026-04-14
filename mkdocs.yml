@@ -1,0 +1,61 @@
+site_name: SiloPrompts
+site_url: https://siloprompts.com
+site_description: Personal AI prompt database — organize, search, and copy your prompts
+repo_url: https://github.com/bdharavathu/siloprompts
+repo_name: bdharavathu/siloprompts
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Quick Start: quick-start.md
+    - Why SiloPrompts: why-siloprompts.md
+  - Usage:
+    - Web UI Guide: usage.md
+    - API Reference: api.md
+  - Deployment:
+    - Docker: docker.md
+    - Kubernetes & Helm: kubernetes.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
+  - tables
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/bdharavathu/siloprompts
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/siloprompts/

@@ -3,9 +3,11 @@ FROM python:3.11-slim AS builder
 
 WORKDIR /build
 
-# Install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+# Install package and production dependencies
+COPY pyproject.toml README.md ./
+COPY src/ ./src/
+RUN pip install --no-cache-dir --user . && \
+    pip install --no-cache-dir --user gunicorn==25.3.0
 
 
 # Final stage
@@ -15,7 +17,9 @@ FROM python:3.11-slim
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PORT=5000 \
-    FLASK_ENV=production
+    FLASK_ENV=production \
+    PROMPTS_DIR=/app/prompts \
+    DATA_DIR=/app/data
 
 # Create non-root user for security
 RUN useradd -m -u 1000 siloprompts && \
@@ -27,10 +31,7 @@ WORKDIR /app
 # Copy Python dependencies from builder
 COPY --from=builder /root/.local /home/siloprompts/.local
 
-# Copy application files
-COPY --chown=siloprompts:siloprompts app.py .
-COPY --chown=siloprompts:siloprompts html_templates ./html_templates
-COPY --chown=siloprompts:siloprompts static ./static
+# Copy default prompts
 COPY --chown=siloprompts:siloprompts prompts ./prompts
 
 # Switch to non-root user
@@ -47,4 +48,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"
 
 # Run with gunicorn for production
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "120", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "--timeout", "120", "--access-logfile", "-", "siloprompts.web:app"]

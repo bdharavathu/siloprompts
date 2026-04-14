@@ -1,4 +1,4 @@
-.PHONY: help build up down logs restart clean test test-live
+.PHONY: help install build up down logs restart clean test test-live
 
 # Configuration
 CHART_NAME := siloprompts
@@ -34,6 +34,7 @@ help:
 	@echo "  make k8s-port-forward - Port forward to localhost"
 	@echo ""
 	@echo "Development Commands:"
+	@echo "  make install      - Install package in editable mode"
 	@echo "  make dev          - Run in development mode"
 	@echo "  make shell        - Open shell in container"
 
@@ -117,9 +118,12 @@ k8s-port-forward:
 	kubectl port-forward -n $(NAMESPACE) svc/$(RELEASE_NAME) 5002:80
 
 # Development Commands
+install:
+	pip install -e ".[dev,server]"
+
 dev:
 	@echo "Running in development mode..."
-	FLASK_ENV=development python app.py
+	FLASK_ENV=development siloprompts --port 5000
 
 shell:
 	docker-compose exec siloprompts /bin/sh

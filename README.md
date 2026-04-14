@@ -1,6 +1,8 @@
 # SiloPrompts - Personal AI Prompt Database
 
-In the GenAI era, every ask, every query, and every search is a prompt. The ones that actually work — refined through trial and error, containing your proprietary workflows — those are valuable. And most people store them in scattered notes, buried chat histories, or nowhere at all.
+**In the GenAI era, every ask, every query, and every search is a prompt.**
+
+The ones that actually work — refined through trial and error, containing your proprietary workflows — those are valuable. And most people store them in scattered notes, buried chat histories, or nowhere at all.
 
 Cloud prompt managers exist, but they require uploading your prompts to someone else's server. Your sensitive instructions and strategies sitting on a platform you don't control.
 
@@ -8,9 +10,7 @@ Cloud prompt managers exist, but they require uploading your prompts to someone 
 
 > A lightweight, self-hosted web application for storing, searching, and managing your AI prompts across different platforms (ChatGPT, Claude, Perplexity, Gemini, etc.).
 
-![SiloPrompts Web UI](assets/siloprompts_ui.png)
-
-![Prompt Sections View](assets/siloprompts_sections.png)
+![SiloPrompts Walkthrough](https://raw.githubusercontent.com/bdharavathu/siloprompts/main/assets/siloprompts-walkthrough.gif)
 
 ## Features
 
@@ -28,7 +28,29 @@ Cloud prompt managers exist, but they require uploading your prompts to someone 
 
 ## Quick Start
 
-### Docker (Quickest)
+### pip (Simplest)
+
+```bash
+pip install siloprompts
+siloprompts
+```
+
+Access at http://localhost:5000
+
+Prompts are stored in `~/.siloprompts/prompts/` by default.
+
+```bash
+# Custom port and prompts directory
+siloprompts --port 5002 --prompts /path/to/prompts
+
+# Open browser automatically
+siloprompts --open
+
+# Show version
+siloprompts --version
+```
+
+### Docker
 
 ```bash
 docker run -d -p 5002:5000 bdharavathu/siloprompts
@@ -37,7 +59,7 @@ docker run -d -p 5002:5000 bdharavathu/siloprompts
 Access at http://localhost:5002
 
 Optional: Mount your own prompts folder for persistence
-```
+```bash
 docker run -d -p 5002:5000 -v ./prompts:/app/prompts bdharavathu/siloprompts
 ```
 
@@ -51,14 +73,13 @@ docker-compose up -d
 # Access at http://localhost:5002
 ```
 
-### Local Development
+### From Source
 
 ```bash
-pip install -r requirements.txt
-export FLASK_ENV=development PROMPTS_DIR=./prompts DATA_DIR=./data
-python app.py
-
-# Access at http://localhost:5000
+git clone https://github.com/bdharavathu/siloprompts.git
+cd siloprompts
+pip install -e ".[dev,server]"
+siloprompts --port 5000 --prompts ./prompts --open
 ```
 
 ## Usage
@@ -72,15 +93,6 @@ python app.py
 7. **Export** any prompt as a `.md` file to share or backup
 8. **Sort** prompts by name, date modified, or size
 9. **Paste** into ChatGPT, Claude, Gemini, Perplexity, or any AI platform
-
-### CLI Tool
-
-```bash
-python prompt-cli.py search "debug"
-python prompt-cli.py list
-python prompt-cli.py show coding/code-review.md
-python prompt-cli.py copy coding/debugging.md 0
-```
 
 ## Adding Prompts
 
@@ -137,14 +149,46 @@ See `helm/siloprompts/values.yaml` for configuration: replicas, resources, ingre
 
 ## Configuration
 
-Copy `.env.example` to `.env`:
+### Environment Variables
 
-```bash
-FLASK_ENV=production
-SECRET_KEY=your-secret-key    # python -c 'import secrets; print(secrets.token_hex(32))'
-PROMPTS_DIR=/app/prompts
-DATA_DIR=/app/data
-PORT=5000
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PROMPTS_DIR` | `~/.siloprompts/prompts` (pip) / `/app/prompts` (Docker) | Prompts storage directory |
+| `DATA_DIR` | `~/.siloprompts/data` (pip) / `/app/data` (Docker) | Application data directory |
+| `FLASK_ENV` | `production` | Flask environment |
+| `SECRET_KEY` | `dev-key-change-in-production` | Flask secret key |
+| `PORT` | `5000` | Server port |
+
+### CLI Options
+
+```
+siloprompts [OPTIONS]
+
+  --port PORT       Port to listen on (default: 5000)
+  --host HOST       Host to bind to (default: 127.0.0.1)
+  --prompts PATH    Prompts directory path
+  --open            Open browser on start
+  --version         Show version and exit
+```
+
+## Project Structure
+
+```
+siloprompts/
+├── src/siloprompts/       # Python package
+│   ├── __init__.py        # Package entry point, version
+│   ├── manager.py         # PromptManager class
+│   ├── web.py             # Flask app factory and API routes
+│   ├── cli.py             # CLI entry point
+│   ├── __main__.py        # python -m siloprompts support
+│   ├── templates/         # HTML templates
+│   └── static/            # CSS, JS, images
+├── prompts/               # Default prompt library
+├── tests/                 # Test suite
+├── helm/                  # Kubernetes Helm chart
+├── pyproject.toml         # Package metadata
+├── Dockerfile             # Container build
+└── docker-compose.yml     # Local Docker setup
 ```
 
 ## Technology Stack
@@ -153,6 +197,7 @@ PORT=5000
 - **Frontend:** Vanilla JavaScript, HTML5, CSS3
 - **Storage:** Markdown files (no database)
 - **Container:** Docker, Kubernetes with Helm
+- **Package:** pip installable via PyPI
 
 ## Roadmap
 
@@ -161,6 +206,7 @@ PORT=5000
 - [x] Tags for cross-category organization
 - [x] Section-level favorites
 - [x] Sort, Import/Export
+- [x] pip installable package
 - [ ] Usage analytics
 - [ ] Browser extension
 

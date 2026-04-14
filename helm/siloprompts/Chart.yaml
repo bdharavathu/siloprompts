@@ -2,8 +2,8 @@ apiVersion: v2
 name: siloprompts
 description: A Helm chart for SiloPrompts - Personal AI Prompt Database
 type: application
-version: 1.0.3
-appVersion: "1.0.3"
+version: 1.0.4
+appVersion: "1.0.4"
 keywords:
   - siloprompts
   - ai

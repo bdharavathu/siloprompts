@@ -90,7 +90,7 @@ secret:
 persistence:
   prompts:
     enabled: true
-    accessMode: ReadOnlyMany
+    accessMode: ReadWriteOnce
     size: 500Mi
     storageClass: ""
     # For hostPath (development only)
